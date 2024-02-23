@@ -20,11 +20,12 @@ const app = express();
 
 // Connexion à la base de donnée MongoDB
 
+require("dotenv").config();
+
+const MONGODB_URI = process.env.MONGODB_URI;
+
 mongoose
-  .connect(
-    "mongodb+srv://CedricMillot:6MMdC6y34GQD8HaI@vieuxgrimoire.tsl3c2w.mongodb.net/",
-    { useNewUrlParser: true, useUnifiedTopology: true }
-  )
+  .connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch(() => console.log("Connexion à MongoDB échouée !"));
 
