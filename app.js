@@ -5,7 +5,6 @@ const dotenv = require("dotenv");
 const fs = require("fs");
 const bookRouter = require("./routes/bookRouter");
 const userRouter = require("./routes/userRouter");
-const bodyParser = require("body-parser");
 
 // crée le dossier "images" vide
 fs.mkdir("images", { recursive: true }, (err) => {
@@ -44,7 +43,7 @@ app.use((req, res, next) => {
 });
 
 // Convertit le body au format JSON au format JS (ne fonctionne pas avec les body Multipart)
-app.use(bodyParser.json());
+app.use(express.json());
 
 // Indique les routes à utiliser pour un point End Point
 app.use("/api/books", bookRouter);

@@ -8,17 +8,21 @@ exports.getAllBooks = (req, res, next) => {
     .catch((error) => res.status(500).json({ error }));
 };
 
-// Renvoie les 3 livres les mieux notés
+// Fonction pour obtenir les trois livres les mieux notés
 exports.getBestRatingBooks = (req, res, next) => {
+  // Recherche tous les livres dans la base de données
   Book.find()
+    //.sort Trie les résultats par ordre décroissant de la propriété averageRating
     .sort({ averageRating: "desc" })
+    // Limite le nombre de résultats renvoyés à trois
     .limit(3)
     .then((books) => res.status(200).json(books))
     .catch((error) => res.status(400).json({ error }));
 };
 
-// Renvoie un livre selon son ID
+// Fonction pour obtenir un livre par son ID
 exports.getOneBook = (req, res, next) => {
+  // Utilise la méthode de Mongoose pour rechercher un livre dans la BDD en fonction de l'ID passé dans les paramètres de l'URL
   Book.findById(req.params.id)
     .then((book) => res.status(200).json(book))
     .catch((error) => res.status(404).json({ error }));
@@ -89,7 +93,6 @@ exports.setBookRating = (req, res, next) => {
 exports.modifyBook = (req, res, next) => {
   // Récupère les données à mettre à jour (soit dans le req.body.book Parsé [si il y a un file] soit dans le req.body)
   const bookUpdated = req.body.book ? JSON.parse(req.body.book) : req.body;
-
   // Ajoute une imageUrl si une file est fournie par le multer
   if (req.file) {
     bookUpdated.imageUrl = req.file.externalURL;
@@ -101,11 +104,16 @@ exports.modifyBook = (req, res, next) => {
     Book.findByIdAndUpdate(req.params.id, { ...bookUpdated })
       .then((oldBook) => {
         // Récupère l'ancien nom du fichier sur le serveur
-        const oldFileName = oldBook.imageUrl.split("/images/")[1];
+        console.log(oldBook);
         // Supprime l'ancienne image du serveur
-        fs.unlink(`images/${oldFileName}`, () => {
+        if (req.file) {
+          const oldFileName = oldBook.imageUrl.split("/images/")[1];
+          fs.unlink(`images/${oldFileName}`, () => {
+            res.status(200).json({ message: "livre modifié" });
+          });
+        } else {
           res.status(200).json({ message: "livre modifié" });
-        });
+        }
       })
       .catch((error) => res.status(400).json({ error }));
   } else {

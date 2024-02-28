@@ -1,6 +1,6 @@
 const express = require("express");
 const bookController = require("../controllers/bookController");
-const multer = require("../middleware/multer-config");
+const multer = require("../middleware/multerConfig");
 const auth = require("../middleware/auth");
 const imageConverter = require("../middleware/imageConverter");
 
